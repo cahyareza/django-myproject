@@ -8,6 +8,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 import json
 import sys
+from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
 from myproject.apps.core.versioning import get_git_changeset_timestamp
 
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
     # third-party
     # ...
     # local
+    'myproject.apps.magazine',
     # ...
 ]
 
@@ -155,6 +157,16 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+MAGAZINE_ARTICLE_THEME_CHOICES = [
+    ('futurism', _("Futurism")),
+    ('nostalgia', _("Nostalgia")),
+    ('sustainability', _("Sustainability")),
+    ('wonder', _("Wonder")),
+    ('positivity', _("Positivity")),
+    ('solutions', _("Solutions")),
+    ('science', _("Science")),
+]
 
 EMAIL_HOST = get_secret("EMAIL_HOST")
 EMAIL_PORT = get_secret("EMAIL_PORT")
