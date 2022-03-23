@@ -58,7 +58,9 @@ INSTALLED_APPS = [
     # third-party
     # ...
     # local
+    'myproject.apps.core',
     'myproject.apps.magazine',
+    'myproject.apps.ideas',
     # ...
 ]
 
