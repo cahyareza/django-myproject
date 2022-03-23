@@ -55,6 +55,7 @@ class Idea(UrlBase, MetaTagsBase, CreationModificationDateBase):
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
+        related_name="authored_ideas",
     )
 
     title = MultilingualCharField(
@@ -77,6 +78,23 @@ class Idea(UrlBase, MetaTagsBase, CreationModificationDateBase):
         verbose_name = _("Idea")
         verbose_name_plural = _("Ideas")
 
+        constraints = [
+            models.UniqueConstraint(
+                fields=[f"title_{settings.LANGUAGE_CODE}"],
+                condition=~models.Q(author=None),
+                name="unique_titles_for_each_author",
+            ),
+            models.CheckConstraint(
+                check=models.Q(**{
+                    f"title_{settings.LANGUAGE_CODE}__iregex": r"^\S.*\S$"
+                    # starts with non-whitespace,
+                    # ends with non-whitespace,
+                    # anything in the middle
+                }),
+                name="title_has_no_leading_and_trailing_whitespaces",
+            )
+        ]
+
     def __str__(self):
         return self.title
 
@@ -84,3 +102,16 @@ class Idea(UrlBase, MetaTagsBase, CreationModificationDateBase):
         return reverse("idea_details", kwargs={
             "idea_id": str(self.pk),
         })
+
+    def clean(self):
+        import re
+        lang_code_underscored = settings.LANGUAGE_CODE.replace("-", "_")
+        title_field = f"title_{lang_code_underscored}"
+        title_value = getattr(self, f"title_{lang_code_underscored}")
+        if self.author and Idea.objects.exclude(pk=self.pk).filter(**{
+            "author": self.author,
+            title_field: title_value,
+        }).exists():
+            raise ValidationError(_("Each idea of the same user should have a unique title."))
+        if not re.match(r"^\S.*\S$", title_value):
+            raise ValidationError(_("The title cannot start or end with a whitespace."))
