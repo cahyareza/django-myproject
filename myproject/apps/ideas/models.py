@@ -1,5 +1,6 @@
 # myproject/apps/ideas/models.py
 from django.db import models
+from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -48,12 +49,28 @@ class Like(FavoriteObjectBase, OwnerBase):
 
 class Idea(UrlBase, MetaTagsBase, CreationModificationDateBase):
     # fields, attributes, properties and methods...
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name=_("Author"),
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
     title = MultilingualCharField(
         _("Title"),
         max_length=200,
     )
     content = MultilingualTextField(
         _("Content"),
+    )
+
+    categories = models.ForeignKey(
+        "categories.Category",
+        verbose_name=_("Categories"),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     class Meta:

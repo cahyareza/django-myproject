@@ -8,6 +8,9 @@ from .models import Idea
 @admin.register(Idea)
 class IdeaAdmin(admin.ModelAdmin):
     fieldsets = [
+        (_("Author and Category"), {
+            "fields": ["author", "categories"],
+        }),
         (_("Title and Content"), {
             "fields": get_multilingual_field_names("title") +
                       get_multilingual_field_names("content")

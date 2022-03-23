@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'myproject.apps.core',
     'myproject.apps.magazine',
     'myproject.apps.ideas',
+    'myproject.apps.categories',
     # ...
 ]
 
