@@ -3,9 +3,15 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from myproject.apps.core.model_fields import (
+    MultilingualCharField,
+    MultilingualTextField,
+)
+
 from myproject.apps.core.models import (
     UrlBase,
     CreationModificationDateBase,
+    MetaTagsBase,
     object_relation_base_factory as generic_relation,
 )
 
@@ -40,8 +46,22 @@ class Like(FavoriteObjectBase, OwnerBase):
         )
 
 
-class Idea(UrlBase, CreationModificationDateBase):
+class Idea(UrlBase, MetaTagsBase, CreationModificationDateBase):
     # fields, attributes, properties and methods...
+    title = MultilingualCharField(
+        _("Title"),
+        max_length=200,
+    )
+    content = MultilingualTextField(
+        _("Content"),
+    )
+
+    class Meta:
+        verbose_name = _("Idea")
+        verbose_name_plural = _("Ideas")
+
+    def __str__(self):
+        return self.title
 
     def get_url_path(self):
         return reverse("idea_details", kwargs={
