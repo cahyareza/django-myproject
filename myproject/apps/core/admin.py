@@ -1,7 +1,7 @@
 from django import forms
 from django.conf import settings
+from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-
 
 def get_multilingual_field_names(field_name):
     lang_code_underscored = settings.LANGUAGE_CODE.replace("-", "_")
