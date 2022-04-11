@@ -19,7 +19,7 @@ def add_or_change_idea(request, pk=None):
     if pk:
         idea = get_object_or_404(Idea, pk=pk)
     if request.method == "POST":
-        form = IdeaForm(
+        form = IdeaForm(request,
             data=request.POST,
             files=request.FILES,
             instance=idea
