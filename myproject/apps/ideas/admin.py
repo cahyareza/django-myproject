@@ -15,4 +15,6 @@ class IdeaAdmin(admin.ModelAdmin):
             "fields": get_multilingual_field_names("title") +
                       get_multilingual_field_names("content")
         }),
+        (_("Ratings"), {"fields": ["rating"]}),
+        (_("Picture"), {"fields": ["picture"]}),
     ]

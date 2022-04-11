@@ -56,10 +56,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # third-party
+    'imagekit',
     # ...
     # local
     'myproject.apps.core',
-    'myproject.apps.magazine',
     'myproject.apps.ideas',
     'myproject.apps.categories',
     # ...

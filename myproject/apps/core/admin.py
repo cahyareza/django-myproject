@@ -11,3 +11,4 @@ def get_multilingual_field_names(field_name):
             lang_code_underscored = lang_code.replace("-", "_")
             field_names.append(f"{field_name}_{lang_code_underscored}")
     return field_names
+

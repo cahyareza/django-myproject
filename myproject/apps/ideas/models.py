@@ -1,6 +1,11 @@
 # myproject/apps/ideas/models.py
 import uuid
+import contextlib
+import os
 
+from imagekit.models import ImageSpecField
+from pilkit.processors import ResizeToFill
+from PIL import Image
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
@@ -15,6 +20,13 @@ from myproject.apps.core.models import (
     UrlBase,
     CreationModificationDateBase,
 )
+
+
+def upload_to(instance, filename):
+    now = timezone_now()
+    base, extension = os.path.splitext(filename)
+    extension = extension.lower()
+    return f"ideas/{now:%Y/%m}/{instance.pk}{extension}"
 
 RATING_CHOICES = ((1, "★☆☆☆☆"), (2, "★★☆☆☆"), (3, "★★★☆☆"), (4, "★★★★☆"), (5, "★★★★★"))
 
@@ -40,6 +52,28 @@ class Idea(UrlBase, CreationModificationDateBase):
         _("Content"),
     )
 
+    picture = models.ImageField(
+        _("Picture"), upload_to=upload_to, null=True,
+    )
+
+    picture_social = ImageSpecField(
+        source="picture",
+        processors=[ResizeToFill(1024, 512)],
+        format="JPEG",
+        options={"quality": 100},
+    )
+
+    picture_large = ImageSpecField(
+        source="picture",
+        processors=[ResizeToFill(800, 400)],
+        format="PNG"
+    )
+    picture_thumbnail = ImageSpecField(
+        source="picture",
+        processors=[ResizeToFill(728, 250)],
+        format="PNG"
+    )
+
     categories = models.ManyToManyField(
         "categories.Category",
         verbose_name=_("Categories"),
@@ -61,3 +95,19 @@ class Idea(UrlBase, CreationModificationDateBase):
         return reverse("ideas:idea_detail", kwargs={
             "pk": str(self.pk),
         })
+
+    def delete(self, *args, **kwargs):
+        from django.core.files.storage import default_storage
+        if self.picture:
+            with contextlib.suppress(FileNotFoundError):
+                default_storage.delete(
+                    self.picture_social.path
+                )
+                default_storage.delete(
+                    self.picture_large.path
+                )
+                default_storage.delete(
+                    self.picture_thumbnail.path
+                )
+            self.picture.delete()
+        super().delete(*args, **kwargs)
