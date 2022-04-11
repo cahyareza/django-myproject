@@ -1,4 +1,6 @@
 # myproject/apps/ideas/models.py
+import uuid
+
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
@@ -12,43 +14,15 @@ from myproject.apps.core.model_fields import (
 from myproject.apps.core.models import (
     UrlBase,
     CreationModificationDateBase,
-    MetaTagsBase,
-    object_relation_base_factory as generic_relation,
 )
 
-FavoriteObjectBase = generic_relation(
-    is_required=True,
-)
+RATING_CHOICES = ((1, "★☆☆☆☆"), (2, "★★☆☆☆"), (3, "★★★☆☆"), (4, "★★★★☆"), (5, "★★★★★"))
 
-
-OwnerBase = generic_relation(
-    prefix="owner",
-    prefix_verbose=_("Owner"),
-    is_required=True,
-    add_related_name=True,
-    limit_content_type_choices_to={
-        "model__in": (
-            "user",
-            "group",
-        )
-    }
-)
-
-
-class Like(FavoriteObjectBase, OwnerBase):
-    class Meta:
-        verbose_name = _("Like")
-        verbose_name_plural = _("Likes")
-
-    def __str__(self):
-        return _("{owner} likes {object}").format(
-            owner=self.owner_content_object,
-            object=self.content_object
-        )
-
-
-class Idea(UrlBase, MetaTagsBase, CreationModificationDateBase):
+class Idea(UrlBase, CreationModificationDateBase):
     # fields, attributes, properties and methods...
+    uuid = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False
+    )
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         verbose_name=_("Author"),
@@ -66,72 +40,24 @@ class Idea(UrlBase, MetaTagsBase, CreationModificationDateBase):
         _("Content"),
     )
 
-    categories = models.ForeignKey(
+    categories = models.ManyToManyField(
         "categories.Category",
         verbose_name=_("Categories"),
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
         related_name="category_ideas",
     )
 
-    # categories = models.ManyToManyField(
-    #     "categories.Category",
-    #     verbose_name=_("Categories"),
-    #     blank=True,
-    #     related_name="ideas",
-    # )
+    rating = models.PositiveIntegerField(
+        _("Rating"), choices=RATING_CHOICES, blank=True, null=True
+    )
 
     class Meta:
         verbose_name = _("Idea")
         verbose_name_plural = _("Ideas")
 
-        constraints = [
-            models.UniqueConstraint(
-                fields=[f"title_{settings.LANGUAGE_CODE}"],
-                condition=~models.Q(author=None),
-                name="unique_titles_for_each_author",
-            ),
-            models.CheckConstraint(
-                check=models.Q(**{
-                    f"title_{settings.LANGUAGE_CODE}__iregex": r"^\S.*\S$"
-                    # starts with non-whitespace,
-                    # ends with non-whitespace,
-                    # anything in the middle
-                }),
-                name="title_has_no_leading_and_trailing_whitespaces",
-            )
-        ]
-
     def __str__(self):
         return self.title
 
     def get_url_path(self):
-        return reverse("idea_details", kwargs={
-            "idea_id": str(self.pk),
+        return reverse("ideas:idea_detail", kwargs={
+            "pk": str(self.pk),
         })
-
-    def clean(self):
-        import re
-        lang_code_underscored = settings.LANGUAGE_CODE.replace("-", "_")
-        title_field = f"title_{lang_code_underscored}"
-        title_value = getattr(self, f"title_{lang_code_underscored}")
-        if self.author and Idea.objects.exclude(pk=self.pk).filter(**{
-            "author": self.author,
-            title_field: title_value,
-        }).exists():
-            raise ValidationError(_("Each idea of the same user should have a unique title."))
-        if not re.match(r"^\S.*\S$", title_value):
-            raise ValidationError(_("The title cannot start or end with a whitespace."))
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        print("save() from Idea called")
-
-    def delete(self, *args, **kwargs):
-        super().delete(*args, **kwargs)
-        print("delete() from Idea called")
-
-    def test(self):
-        super().test()
-        print("test() from Idea called")
