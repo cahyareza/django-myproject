@@ -27,4 +27,7 @@ class IdeaAdmin(admin.ModelAdmin):
         (_("Title and Content"), {
             "fields": ["title", "content", "picture"]
         }),
+        (_("Ratings"), {
+            "fields": ["rating"]
+        }),
     ]
