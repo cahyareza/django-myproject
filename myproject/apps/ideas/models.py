@@ -14,6 +14,7 @@ from django.utils.translation import gettext_lazy as _
 from myproject.apps.core.model_fields import (
     MultilingualCharField,
     MultilingualTextField,
+    TranslatedField,
 )
 
 from myproject.apps.core.models import (
@@ -44,11 +45,11 @@ class Idea(UrlBase, CreationModificationDateBase):
         related_name="authored_ideas",
     )
 
-    title = MultilingualCharField(
+    title = models.CharField(
         _("Title"),
         max_length=200,
     )
-    content = MultilingualTextField(
+    content = models.TextField(
         _("Content"),
     )
 
@@ -79,6 +80,9 @@ class Idea(UrlBase, CreationModificationDateBase):
         verbose_name=_("Categories"),
         related_name="category_ideas",
     )
+
+    translated_title = TranslatedField("title")
+    translated_content = TranslatedField("content")
 
     rating = models.PositiveIntegerField(
         _("Rating"), choices=RATING_CHOICES, blank=True, null=True
@@ -111,3 +115,30 @@ class Idea(UrlBase, CreationModificationDateBase):
                 )
             self.picture.delete()
         super().delete(*args, **kwargs)
+
+
+class IdeaTranslations(models.Model):
+    idea = models.ForeignKey(
+        Idea,
+        verbose_name=_("Idea"),
+        on_delete=models.CASCADE,
+        related_name="translations",
+    )
+    language = models.CharField(_("Language"), max_length=7)
+
+    title = models.CharField(
+        _("Title"),
+        max_length=200,
+    )
+    content = models.TextField(
+        _("Content"),
+    )
+
+    class Meta:
+        verbose_name = _("Idea Translations")
+        verbose_name_plural = _("Idea Translations")
+        ordering = ["language"]
+        unique_together = [["idea", "language"]]
+
+    def __str__(self):
+        return self.title
