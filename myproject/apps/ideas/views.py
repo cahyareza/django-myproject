@@ -27,10 +27,10 @@ def add_or_change_idea(request, pk=None):
         if form.is_valid():
             idea = form.save()
             return redirect("ideas:idea_detail", pk=idea.pk)
-        else:
-            form = IdeaForm(request, instance=idea)
-        context = {"idea": idea, "form": form}
-        return render(request, "ideas/idea_form.html", context)
+    else:
+        form = IdeaForm(request, instance=idea)
+    context = {"idea": idea, "form": form}
+    return render(request, "ideas/idea_form.html", context)
 
 @login_required
 def delete_idea(request, pk):
