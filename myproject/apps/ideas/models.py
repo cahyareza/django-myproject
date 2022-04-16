@@ -10,6 +10,7 @@ from django.db import models
 from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.utils.timezone import now as timezone_now
 
 from myproject.apps.core.model_fields import (
     MultilingualCharField,

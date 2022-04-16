@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n static %}
+{% load i18n crispy_forms_tags static %}
 
 {% block content %}
     <a href="{% url "ideas:idea_list" %}">{% trans "List of ideas" %}</a>
@@ -12,4 +12,5 @@
             {% trans "Add Idea" %}
         {% endif %}
     </h1>
+    {% crispy form %}
 {% endblock %}

@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'django.forms',
     # third-party
     'imagekit',
+    'crispy_forms',
     # ...
     # local
     'myproject.apps.core',
@@ -65,6 +66,8 @@ INSTALLED_APPS = [
     'myproject.apps.categories',
     # ...
 ]
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
