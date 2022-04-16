@@ -1,5 +1,9 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n utility_tags %}
+
+{% block sidebar %}
+    {% include "ideas/includes/filters.html" %}
+{% endblock %}
 
 {% block main %}
     <h1>{% trans "Ideas" %}</h1>

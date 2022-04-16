@@ -97,6 +97,9 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'myproject.apps.core.context_processors.website_url',
             ],
+            'libraries':{
+                'custom_templatetag': 'myproject.apps.core.templatetags.utility_tags',
+            }
         },
     },
 ]

@@ -1,11 +1,17 @@
 # myprojects/apps/ideas/forms.py
 from django import forms
 from .models import Idea, IdeaTranslations
+from myproject.apps.categories.models import Category
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.db import models
+from django.contrib.auth import get_user_model
 
 from crispy_forms import bootstrap, helper, layout
 
+from .models import RATING_CHOICES
+
+User = get_user_model()
 
 class IdeaForm(forms.ModelForm):
     class Meta:
@@ -99,3 +105,25 @@ class IdeaTranslationsForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.disable_csrf = True
         self.helper.layout = layout.Layout(main_fieldset)
+
+class IdeaFilterForm(forms.Form):
+    author = forms.ModelChoiceField(
+        label = _("Author"),
+        required = False,
+        queryset = User.objects.annotate(
+            idea_count= models.Count("authored_ideas")
+        ).filter(idea_count__gt=0),
+    )
+
+    category = forms.ModelChoiceField(
+        label=_("Category"),
+        required=False,
+        queryset=Category.objects.annotate(
+           idea_count=models.Count("category_ideas")
+        ).filter(idea_count__gt=0),
+    )
+
+    rating = forms.ChoiceField(
+        label=_("Rating"), required=False, choices=RATING_CHOICES
+    )
+
