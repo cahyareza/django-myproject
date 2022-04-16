@@ -172,6 +172,12 @@ LANGUAGES = [
     ("es", "Spanish"),      ("sv", "Swedish"),
 ]
 
+LANGUAGES_EXCEPT_THE_DEFAULT = [
+    (lang_code, lang_name)
+    for lang_code, lang_name in LANGUAGES
+    if lang_code != LANGUAGE_CODE
+]
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 

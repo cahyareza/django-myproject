@@ -11,5 +11,6 @@
     </div>
     <button type="button" class="btn btn-primary btn-sm add-inline-form">{% trans "Add translations to another language" %}</button>
     <div class="empty-form d-none">
+        {% crispy translations_formset.empty_form %}
     </div>
 </section>
