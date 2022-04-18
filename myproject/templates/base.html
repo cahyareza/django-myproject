@@ -13,6 +13,7 @@
      <link rel="icon" type="image/png" href="{% static 'site/img/favicon-16x16.png' %}" sizes="16x16" />
 
     <title>{% trans "Hello, World!" %}</title>
+    {% block meta_tags %}{% endblock %}
   </head>
   <body>
     <div class="container my-5">
