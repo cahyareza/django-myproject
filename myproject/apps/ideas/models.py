@@ -101,6 +101,26 @@ class Idea(UrlBase, CreationModificationDateBase):
             "pk": str(self.pk),
         })
 
+    @property
+    def structured_data(self):
+        from django.utils.translation import get_language
+
+        lang_code = get_language()
+        data = {
+            "@type": "CreativeWork",
+            "name": self.translated_title,
+            "description": self.translated_content,
+            "inLanguage": lang_code,
+        }
+        if self.author:
+            data["author"] = {
+                "@type": "Person",
+                "name": self.author.get_full_name() or self.author.username,
+            }
+        if self.picture:
+            data["image"] = self.picture_social.url
+        return data
+
     def delete(self, *args, **kwargs):
         from django.core.files.storage import default_storage
         if self.picture:

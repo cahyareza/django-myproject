@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     # third-party
     'imagekit',
     'crispy_forms',
+    'django_json_ld',
     # ...
     # local
     'myproject.apps.core',

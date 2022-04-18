@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n json_ld %}
 
 {% block meta_tags %}
     <meta property="og:type" content="website" />
@@ -33,6 +33,8 @@
         <meta name="twitter:image" content=
          "{{ idea.picture_social.url }}">
     {% endif %}
+
+    {% render_json_ld idea.structured_data %}
 {% endblock %}
 
 
