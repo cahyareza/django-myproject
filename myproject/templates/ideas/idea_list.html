@@ -18,6 +18,7 @@
                 </div>
             </a>
         {% endfor %}
+        {% include "misc/includes/pagination.html" %}
     {% else %}
         <p>{% trans "There are no ideas yet." %}</p>
     {% endif %}

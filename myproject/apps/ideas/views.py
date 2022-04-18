@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import modelformset_factory
 from django.views.generic import ListView, DetailView
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from .forms import IdeaForm, IdeaTranslationsForm
 from .models import Idea, IdeaTranslations
 from django.conf import settings
@@ -10,7 +11,7 @@ from django.conf import settings
 from .forms import IdeaFilterForm
 from .models import Idea, RATING_CHOICES
 
-PAGE_SIZE = getattr(settings, "PAGE_SIZE", 24)
+PAGE_SIZE = getattr(settings, "PAGE_SIZE", 2)
 
 class IdeaList(ListView):
     model = Idea
@@ -93,7 +94,23 @@ def idea_list(request):
         )
         qs = filter_facets(facets, qs, form, filters)
 
-    context = {"form": form, "facets": facets, "object_list": qs}
+    paginator = Paginator(qs, PAGE_SIZE)
+    page_number = request.GET.get("page")
+    try:
+        page = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, show first page.
+        page = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, show last existing page.
+        page = paginator.page(paginator.num_pages)
+
+
+    context = {
+        "form": form,
+        "facets": facets,
+        "object_list": page
+    }
     return render(request, "ideas/idea_list.html", context)
 
 def filter_facets(facets, qs, form, filters):
