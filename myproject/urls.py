@@ -20,6 +20,7 @@ from django.urls import include, path
 from django.conf.urls.static import static
 from django.shortcuts import redirect
 
+from myproject.apps.core import views as core_views
 
 urlpatterns = i18n_patterns(
     path('', lambda request: redirect("ideas:idea_list")),
@@ -27,6 +28,7 @@ urlpatterns = i18n_patterns(
     path("accounts/", include("django.contrib.auth.urls")),
     path("ideas/", include(("myproject.apps.ideas.urls", "ideas"), namespace="ideas")),
     path("search/", include("haystack.urls")),
+    path("js-settings/", core_views.js_settings, name="js_settings"),
 
 )
 
