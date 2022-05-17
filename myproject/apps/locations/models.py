@@ -1,5 +1,11 @@
 # myproject/apps/locations/models.py
 import uuid
+import contextlib
+import os
+
+from imagekit.models import ImageSpecField
+from pilkit.processors import ResizeToFill
+from django.utils.timezone import now as timezone_now
 from collections import namedtuple
 from django.contrib.gis.db import models
 from django.urls import reverse
@@ -12,6 +18,12 @@ from myproject.apps.core.models import (
 COUNTRY_CHOICES = getattr(settings, "COUNTRY_CHOICES", [])
 
 Geoposition = namedtuple("Geoposition", ["longitude", "latitude"])
+
+def upload_to(instance, filename):
+    now = timezone_now()
+    base, extension = os.path.splitext(filename)
+    extension = extension.lower()
+    return f"locations/{now:%Y/%m}/{instance.pk}{extension}"
 
 class Location(CreationModificationDateBase, UrlBase):
     uuid = models.UUIDField(primary_key=True, default=None,
@@ -31,6 +43,20 @@ class Location(CreationModificationDateBase, UrlBase):
     )
     geoposition = models.PointField(blank=True, null=True)
 
+    picture = models.ImageField(_("Picture"), upload_to=upload_to)
+    picture_desktop = ImageSpecField(
+        source="picture",
+        processors=[ResizeToFill(1200, 600)],
+        format="JPEG",
+        options={"quality": 100},
+    )
+    picture_tablet = ImageSpecField(
+        source="picture", processors=[ResizeToFill(768, 384)], format="PNG"
+    )
+    picture_mobile = ImageSpecField(
+        source="picture", processors=[ResizeToFill(640, 320)], format="PNG"
+    )
+
     class Meta:
         verbose_name = _("Location")
         verbose_name_plural = _("Locations")
@@ -45,6 +71,18 @@ class Location(CreationModificationDateBase, UrlBase):
         if self.pk is None:
             self.pk = uuid.uuid4()
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        from django.core.files.storage import default_storage
+
+        if self.picture:
+            with contextlib.suppress(FileNotFoundError):
+                default_storage.delete(self.picture_desktop.path)
+                default_storage.delete(self.picture_tablet.path)
+                default_storage.delete(self.picture_mobile.path)
+            self.picture.delete()
+
+        super().delete(*args, **kwargs)
 
     def get_field_value(self, field_name):
         if isinstance(field_name, str):
