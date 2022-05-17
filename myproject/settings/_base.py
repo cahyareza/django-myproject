@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
     'django.forms',
     # third-party
     'imagekit',
@@ -68,6 +69,7 @@ INSTALLED_APPS = [
     'myproject.apps.ideas',
     'myproject.apps.categories',
     'myproject.apps.search',
+    'myproject.apps.locations',
     # ...
 ]
 
@@ -100,6 +102,7 @@ TEMPLATES = [
                 'django.template.context_processors.media',
                 'django.template.context_processors.static',
                 'myproject.apps.core.context_processors.website_url',
+                'myproject.apps.core.context_processors.google_maps',
             ],
             'libraries':{
                 'custom_templatetag': 'myproject.apps.core.templatetags.utility_tags',
@@ -118,7 +121,8 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': get_secret('DATABASE_NAME'),
         'USER': get_secret('DATABASE_USER'),
         'PASSWORD': get_secret('DATABASE_PASSWORD'),
@@ -126,6 +130,8 @@ DATABASES = {
         'PORT': '5432',
     }}
 
+GDAL_LIBRARY_PATH = '/opt/local/lib/libgdal.dylib'
+GEOS_LIBRARY_PATH = '/opt/local/lib/libgeos_c.dylib'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/topics/auth/passwords/#password-validation
@@ -179,6 +185,37 @@ LANGUAGES = [
     ("es", "Spanish"),      ("sv", "Swedish"),
 ]
 
+COUNTRY_CHOICES = [
+    ("BE", _("Belgium")),
+    ("BG", _("Bulgaria")),
+    ("CZ", _("Czechia")),
+    ("DK", _("Denmark")),
+    ("DE", _("Germany")),
+    ("EE", _("Estonia")),
+    ("IE", _("Ireland")),
+    ("EL", _("Greece")),
+    ("ES", _("Spain")),
+    ("FR", _("France")),
+    ("HR", _("Croatia")),
+    ("IT", _("Italy")),
+    ("CY", _("Cyprus")),
+    ("LV", _("Latvia")),
+    ("LT", _("Lithuania")),
+    ("LU", _("Luxembourg")),
+    ("HU", _("Hungary")),
+    ("MT", _("Malta")),
+    ("NL", _("Netherlands")),
+    ("AT", _("Austria")),
+    ("PL", _("Poland")),
+    ("PT", _("Portugal")),
+    ("RO", _("Romania")),
+    ("SI", _("Slovenia")),
+    ("SK", _("Slovakia")),
+    ("FI", _("Finland")),
+    ("SE", _("Sweden")),
+    ("UK", _("United Kingdom")),
+]
+
 LANGUAGES_EXCEPT_THE_DEFAULT = [
     (lang_code, lang_name)
     for lang_code, lang_name in LANGUAGES
@@ -227,3 +264,5 @@ lang_code_underscored = LANGUAGE_CODE.replace("-", "_")
 HAYSTACK_CONNECTIONS["default"] = HAYSTACK_CONNECTIONS[
     f"default_{lang_code_underscored}"
 ]
+
+GOOGLE_MAPS_API_KEY = get_secret("GOOGLE_MAPS_API_KEY")
