@@ -15,6 +15,8 @@ from myproject.apps.core.models import (
    CreationModificationDateBase, UrlBase
 )
 
+RATING_CHOICES = ((1, "★☆☆☆☆"), (2, "★★☆☆☆"), (3, "★★★☆☆"), (4, "★★★★☆"), (5, "★★★★★"))
+
 COUNTRY_CHOICES = getattr(settings, "COUNTRY_CHOICES", [])
 
 Geoposition = namedtuple("Geoposition", ["longitude", "latitude"])
@@ -35,6 +37,10 @@ class Location(CreationModificationDateBase, UrlBase):
     street_address2 = models.CharField(
         _("Street address (2nd line)"), max_length=255, blank=True
     )
+    rating = models.PositiveIntegerField(
+        _("Rating"), choices=RATING_CHOICES, blank=True, null=True
+    )
+
     postal_code = models.CharField(_("Postal code"), max_length=255, blank=True)
     city = models.CharField(_("City"), max_length=255, blank=True)
     country = models.CharField(
@@ -123,3 +129,6 @@ class Location(CreationModificationDateBase, UrlBase):
     def set_geoposition(self, longitude, latitude):
         from django.contrib.gis.geos import Point
         self.geoposition = Point(longitude, latitude, srid=4326)
+
+    def get_rating_percentage(self):
+        return self.rating * 20 if self.rating is not None else None
