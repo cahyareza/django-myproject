@@ -34,6 +34,13 @@ urlpatterns = i18n_patterns(
         namespace="likes")),
 )
 
+urlpatterns += [
+    path(
+        "upload-file/",
+        core_views.upload_file,
+        name="upload_file",
+    ),
+]
+
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT)
-
