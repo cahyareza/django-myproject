@@ -27,7 +27,7 @@
                                     </div>
                                     <p class="card-text">{{ location.name }}<br/>
                                         <small>{{ location.city }},
-                                            {{ location.get_country_display }}</small>
+                                            {{ location.get_country_display }} - post {{ location.modified|date_since }}</small>
                                     </p>
                                 </div>
                             </div>
