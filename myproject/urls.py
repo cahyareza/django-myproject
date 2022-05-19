@@ -30,7 +30,8 @@ urlpatterns = i18n_patterns(
     path("ideas/", include(("myproject.apps.ideas.urls", "ideas"), namespace="ideas")),
     path("search/", include("haystack.urls")),
     path("js-settings/", core_views.js_settings, name="js_settings"),
-
+    path("likes/", include(("myproject.apps.likes.urls", "likes"),
+        namespace="likes")),
 )
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

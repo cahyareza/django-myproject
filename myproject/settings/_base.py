@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     'myproject.apps.categories',
     'myproject.apps.search',
     'myproject.apps.locations',
+    'myproject.apps.likes',
     # ...
 ]
 
@@ -84,6 +85,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
 ]
 
 ROOT_URLCONF = 'myproject.urls'

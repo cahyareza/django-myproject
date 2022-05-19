@@ -4,7 +4,7 @@ from .models import Location
 
 class LocationList(ListView):
     model = Location
-    paginate_by = 10
+    paginate_by = 8
 
 class LocationDetail(DetailView):
     model = Location
