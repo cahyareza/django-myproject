@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'django_json_ld',
     'qr_code',
     'haystack',
+    'sekizai',
     # ...
     # local
     'myproject.apps.core',
@@ -105,6 +106,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'myproject.apps.core.context_processors.website_url',
                 'myproject.apps.core.context_processors.google_maps',
+                'sekizai.context_processors.sekizai',
             ],
             'libraries':{
                 'custom_templatetag': 'myproject.apps.core.templatetags.utility_tags',
