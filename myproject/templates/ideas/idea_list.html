@@ -13,7 +13,7 @@
                 <div class="card">
                   <img src="{{ idea.picture_thumbnail.url }}" alt="" />
                   <div class="card-body">
-                    <p class="card-text">{{ idea.translated_title }}</p>
+                    <p class="card-text">{{ idea.translated_title }} - {{ idea.content|first_media }}</p>
                   </div>
                 </div>
             </a>

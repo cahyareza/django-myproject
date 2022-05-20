@@ -1,3 +1,5 @@
+import re
+
 from urllib.parse import urlencode
 from datetime import datetime
 from django import template
@@ -83,3 +85,24 @@ def date_since(specific_date):
     else:
         # Date is in the future; return formatted date.
         return f"{specific_date:%B %d, %Y}"
+
+
+MEDIA_CLOSED_TAGS = "|".join([
+    "figure", "object", "video", "audio", "iframe"])
+MEDIA_SINGLE_TAGS = "|".join(["img", "embed"])
+MEDIA_TAGS_REGEX = re.compile(
+    r"<(?P<tag>" + MEDIA_CLOSED_TAGS + ")[\S\s]+?</(?P=tag)>|" +
+    r"<(" + MEDIA_SINGLE_TAGS + ")[^>]+>",
+    re.MULTILINE)
+
+
+@register.filter
+def first_media(content):
+    """
+    Returns the chunk of media-related markup from the html content
+    """
+    tag_match = MEDIA_TAGS_REGEX.search(content)
+    media_tag = ""
+    if tag_match:
+        media_tag = tag_match.group()
+    return mark_safe(media_tag)
