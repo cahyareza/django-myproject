@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n json_ld %}
+{% load i18n json_ld utility_tags %}
 
 {% block meta_tags %}
     <meta property="og:type" content="website" />
@@ -46,7 +46,7 @@
         {% endblocktrans %}
     </h1>
     <img src="{{ idea.picture_large.url }}" alt="" />
-    {{ idea.translated_content|linebreaks|urlize }}
+    {{ idea.translated_content|linebreaks|urlize|humanize_url:30 }}
     <p>
         {% for category in idea.categories.all %}
             <span class="badge badge-pill badge-info">{{ category.translated_title }}</span>

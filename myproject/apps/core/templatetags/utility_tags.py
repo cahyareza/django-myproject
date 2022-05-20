@@ -106,3 +106,16 @@ def first_media(content):
     if tag_match:
         media_tag = tag_match.group()
     return mark_safe(media_tag)
+
+@register.filter
+def humanize_url(url, letter_count=40):
+    """
+    Returns a shortened human-readable URL
+    """
+    letter_count = int(letter_count)
+    re_start = re.compile(r"^https?://")
+    re_end = re.compile(r"/$")
+    url = re_end.sub("", re_start.sub("", url))
+    if len(url) > letter_count:
+        url = f"{url[:letter_count - 1]}…"
+    return url
