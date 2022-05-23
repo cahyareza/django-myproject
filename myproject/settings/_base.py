@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'qr_code',
     'haystack',
     'sekizai',
+    'myproject.apps.admin_honeypot_fix.apps.AdminHoneypotConfig',
     # ...
     # local
     'myproject.apps.core',
@@ -87,6 +88,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "csp.middleware.CSPMiddleware",
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -270,3 +272,17 @@ HAYSTACK_CONNECTIONS["default"] = HAYSTACK_CONNECTIONS[
 ]
 
 GOOGLE_MAPS_API_KEY = get_secret("GOOGLE_MAPS_API_KEY")
+
+CSP_DEFAULT_SRC = [
+   "'self'",
+   "https://stackpath.bootstrapcdn.com/",
+]
+CSP_SCRIPT_SRC = [
+   "'self'",
+   "https://stackpath.bootstrapcdn.com/",
+   "https://code.jquery.com/",
+   "https://cdnjs.cloudflare.com/",
+   "https://maps-api-ssl.google.com/",
+]
+CSP_IMG_SRC = ["*", "data:"]
+CSP_FRAME_SRC = ["*"]

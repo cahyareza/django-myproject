@@ -32,7 +32,10 @@ urlpatterns = i18n_patterns(
     path("js-settings/", core_views.js_settings, name="js_settings"),
     path("likes/", include(("myproject.apps.likes.urls", "likes"),
         namespace="likes")),
-)
+    path("admin/", include("admin_honeypot.urls",
+        namespace="admin_honeypot")),
+    path("management/", admin.site.urls),
+    )
 
 urlpatterns += [
     path(
