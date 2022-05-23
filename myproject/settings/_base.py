@@ -11,6 +11,9 @@ import sys
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
 from myproject.apps.core.versioning import get_git_changeset_timestamp
+from myproject.apps.auth_extra.password_validation import (
+    SpecialCharacterInclusionValidator,
+)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -144,16 +147,35 @@ GEOS_LIBRARY_PATH = '/opt/local/lib/libgeos_c.dylib'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation.'
+        'UserAttributeSimilarityValidator',
+        'OPTIONS': {'max_similarity': 0.5},
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': 'django.contrib.auth.password_validation.'
+        'MinimumLengthValidator',
+        'OPTIONS': {'min_length': 12},
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.'
+        'CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.'
+        'NumericPasswordValidator',
+    },
+    {
+        "NAME": "myproject.apps.auth_extra.password_validation."
+        "MaximumLengthValidator",
+        "OPTIONS": {"max_length": 32},
+    },
+    {
+        "NAME": "myproject.apps.auth_extra.password_validation."
+        "SpecialCharacterInclusionValidator",
+        "OPTIONS": {
+            "special_chars": ("{", "}", "^", "&")
+            + SpecialCharacterInclusionValidator.DEFAULT_SPECIAL_CHARACTERS
+        },
     },
 ]
 
