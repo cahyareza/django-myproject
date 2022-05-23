@@ -40,6 +40,7 @@ urlpatterns = i18n_patterns(
     path("admin/", include("admin_honeypot.urls",
         namespace="admin_honeypot")),
     path("management/", admin.site.urls),
+    path("videos/", include("myproject.apps.viral_videos.urls")),
     )
 
 urlpatterns += [

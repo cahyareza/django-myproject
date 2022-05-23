@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     'myproject.apps.search',
     'myproject.apps.locations',
     'myproject.apps.likes',
+    'myproject.apps.viral_videos',
     # ...
 ]
 
@@ -324,3 +325,14 @@ AUTHENTICATION_BACKENDS = {
 
 LOGIN_URL = "/login/auth0"
 LOGIN_REDIRECT_URL = "dashboard"
+
+CACHES = {
+    "memcached": {
+        "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
+        "LOCATION": get_secret("CACHE_LOCATION"),
+        "TIMEOUT": 60,  # 1 minute
+        "KEY_PREFIX": "myproject",
+    },
+}
+
+CACHES["default"] = CACHES["memcached"]
