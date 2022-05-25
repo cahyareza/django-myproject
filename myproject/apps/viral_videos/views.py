@@ -5,7 +5,7 @@ from django.db import models
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_cookie
-
+from django.views.generic import ListView
 from .models import ViralVideo
 
 POPULAR_FROM = getattr(
@@ -14,6 +14,9 @@ POPULAR_FROM = getattr(
 
 logger = logging.getLogger(__name__)
 
+class ViralVideoList(ListView):
+    template_name = "viral_videos/viral_video_list.html"
+    model = ViralVideo
 
 @vary_on_cookie
 @cache_page(60)
