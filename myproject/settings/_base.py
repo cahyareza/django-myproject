@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'sekizai',
     'social_django',
     'myproject.apps.admin_honeypot_fix.apps.AdminHoneypotConfig',
+    'debug_toolbar',
     # ...
     # local
     'myproject.apps.core',
@@ -94,6 +95,7 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "csp.middleware.CSPMiddleware",
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -336,3 +338,7 @@ CACHES = {
 }
 
 CACHES["default"] = CACHES["memcached"]
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]

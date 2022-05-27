@@ -19,6 +19,7 @@ from django.conf import settings
 from django.urls import include, path
 from django.conf.urls.static import static
 from django.shortcuts import redirect
+import debug_toolbar
 
 from myproject.apps.core import views as core_views
 from myproject.apps.external_auth import views as external_auth_views
@@ -41,7 +42,8 @@ urlpatterns = i18n_patterns(
         namespace="admin_honeypot")),
     path("management/", admin.site.urls),
     path("videos/", include("myproject.apps.viral_videos.urls")),
-    )
+    path('__debug__/', include('debug_toolbar.urls')),
+)
 
 urlpatterns += [
     path(
